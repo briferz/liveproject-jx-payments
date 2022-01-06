@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jx-payments-pvc
+spec:
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: ""
+  volumeName: jx-payments-volume

@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jx-payments-db-migration-job
+  labels:
+    app: jx-payments
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        app: jx-payments
+    spec:
+      restartPolicy: OnFailure
+      volumes:
+        - name: db-sqlite3
+          persistentVolumeClaim:
+            claimName: jx-payments-pvc
+      containers:
+        - name: jx-payments
+          image: brifer/jx-payments:latest
+          command: [ "python" ]
+          args: [ "manage.py", "migrate" ]
+          volumeMounts:
+            - name: db-sqlite3
+              mountPath: /manning/jx-payments-manning/db.sqlite3
+

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jx-payments-deployment
+  labels:
+    app: jx-payments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jx-payments
+  template:
+    metadata:
+      labels:
+        app: jx-payments
+    spec:
+      initContainers:
+        - name: jx-payments-deployment-init
+          image: "groundnuty/k8s-wait-for:v1.3"
+          imagePullPolicy: IfNotPresent
+          args: ["job", "jx-payments-db-migration-job"]
+      volumes:
+        - name: db-sqlite3
+          persistentVolumeClaim:
+            claimName: jx-payments-pvc
+      containers:
+      - name: jx-payments
+        image: brifer/jx-payments:latest
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - name: db-sqlite3
+            mountPath: /manning/jx-payments-manning/db.sqlite3
